@@ -2,8 +2,8 @@
 
 namespace Application\Customer\InsertMoney;
 
-use Domain\Repository\VendingMachineRepositoryInterface;
 use Domain\Model\Customer;
+use Domain\Repository\VendingMachineRepositoryInterface;
 use Domain\ValueObject\Coin;
 
 final readonly class InsertMoney
@@ -15,11 +15,7 @@ final readonly class InsertMoney
     public function __invoke(Customer $customer, Coin $coin): float
     {
         $machine = $this->machines->get();
-        if (!$machine->isCustomerActive()) {
-            $machine->enterCustomer($customer);
-        } elseif (!$machine->isCustomer($customer)) {
-            throw new \Domain\Exception\MachineBusy();
-        }
+        $machine->enterCustomer($customer);
         $total = $machine->insertCoin($coin);
         $this->machines->save($machine);
 

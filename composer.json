@@ -31,7 +31,8 @@
         "psr-4": {
             "Symfony\\": "symfony/src/",
             "Domain\\": "Domain/",
-            "Application\\": "Application/"
+            "Application\\": "Application/",
+            "Infrastructure\\": "Infrastructure/"
         }
     },
     "autoload-dev": {
