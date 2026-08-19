@@ -15,10 +15,9 @@ final readonly class InsertMoney
     public function __invoke(Customer $customer, Coin $coin): float
     {
         $machine = $this->machines->get();
-        $machine->enterCustomer($customer);
-        $total = $machine->insertCoin($coin);
+        $machine->insertCoin($coin, $customer);
         $this->machines->save($machine);
 
-        return $total / 100;
+        return $machine->insertedAmount() / 100;
     }
 }
