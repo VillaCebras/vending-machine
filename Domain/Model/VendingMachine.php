@@ -25,7 +25,10 @@ final class VendingMachine
 
     public function enterCustomer(Customer $customer): void
     {
-        if ($this->maintenance || $this->customer !== null) {
+        if (
+            $this->maintenance
+            || (null !== $this->customer && $this->customer->id !== $customer->id)
+        ) {
             throw new MachineBusy();
         }
         $this->customer = $customer;
@@ -74,7 +77,7 @@ final class VendingMachine
 
     public function enableMaintenance(string $code, string $expectedCode): void
     {
-        if ($this->maintenance || $this->customer !== null) {
+        if ($this->maintenance || null !== $this->customer) {
             throw new MachineBusy();
         }
         if (!hash_equals($expectedCode, $code)) {
@@ -119,7 +122,7 @@ final class VendingMachine
 
     public function isCustomerActive(): bool
     {
-        return $this->customer !== null;
+        return null !== $this->customer;
     }
 
     public function isCustomer(Customer $customer): bool
@@ -144,7 +147,7 @@ final class VendingMachine
 
     private function requireCustomer(): void
     {
-        if ($this->customer === null || $this->maintenance) {
+        if (null === $this->customer || $this->maintenance) {
             throw new CustomerModeRequired();
         }
     }

@@ -27,7 +27,7 @@ services:
         resource: '../../Application/'
 
     Domain\Repository\VendingMachineRepositoryInterface:
-        alias: Application\Infrastructure\InMemoryVendingMachineRepository
+        alias: Infrastructure\InMemoryVendingMachineRepository
 
     Application\Maintenance\EnableService\EnableService:
         bind:
