@@ -2,11 +2,11 @@
 
 namespace Tests\Application\Customer;
 
-use PHPUnit\Framework\TestCase;
+use Application\Customer\InsertMoney\InsertMoney;
 use Domain\Model\Customer;
 use Domain\ValueObject\Coin;
-use Application\Customer\InsertMoney\InsertMoney;
-use Application\Infrastructure\InMemoryVendingMachineRepository;
+use Infrastructure\InMemoryVendingMachineRepository;
+use PHPUnit\Framework\TestCase;
 
 class InsertMoneyTest extends TestCase
 {
@@ -22,7 +22,7 @@ class InsertMoneyTest extends TestCase
         $this->customer = new Customer('customer-1');
     }
 
-    public function test_insert_coin_successfully()
+    public function testInsertCoinSuccessfully()
     {
         $coin = Coin::fromAmount(0.25);
         $totalInserted = $this->useCase->__invoke($this->customer, $coin);
@@ -32,7 +32,7 @@ class InsertMoneyTest extends TestCase
         $this->assertSame($this->customer, $this->repository->get()->customer());
     }
 
-    public function test_insert_multiple_coins_successfully()
+    public function testInsertMultipleCoinsSuccessfully()
     {
         $coin1 = Coin::fromAmount(0.10);
         $coin2 = Coin::fromAmount(0.25);
@@ -47,18 +47,18 @@ class InsertMoneyTest extends TestCase
         $this->assertEquals(1.35, $totalInserted3);
     }
 
-    public function test_takes_free_machine()
+    public function testTakesFreeMachine()
     {
         $machine = $this->repository->get();
-        
+
         $coin = Coin::fromAmount(0.25);
         $totalInserted = $this->useCase->__invoke($this->customer, $coin);
-        
+
         $this->assertTrue($machine->isCustomerActive());
         $this->assertSame($this->customer->id, $machine->customer()->id);
     }
 
-    public function test_fails_if_machine_taken_by_other_customer()
+    public function testFailsIfMachineTakenByOtherCustomer()
     {
         $coin1 = Coin::fromAmount(0.10);
 
@@ -69,7 +69,7 @@ class InsertMoneyTest extends TestCase
         $this->useCase->__invoke($this->customer, $coin1);
     }
 
-    public function test_fails_if_machine_in_maintenance_mode()
+    public function testFailsIfMachineInMaintenanceMode()
     {
         $coin1 = Coin::fromAmount(0.10);
 
