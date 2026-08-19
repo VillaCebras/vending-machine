@@ -23,7 +23,7 @@ final class VendingMachine
     /** @var array<string, int> */
     private array $stock = [];
 
-    public function enterCustomer(Customer $customer): void
+    protected function enterCustomer(Customer $customer): void
     {
         if (
             $this->maintenance
@@ -34,12 +34,10 @@ final class VendingMachine
         $this->customer = $customer;
     }
 
-    public function insertCoin(Coin $coin): int
+    public function insertCoin(Coin $coin, Customer $customer): void
     {
-        $this->requireCustomer();
+        $this->enterCustomer($customer);
         $this->insertedCoins[] = $coin;
-
-        return $this->insertedAmount();
     }
 
     /** @return array{product: Product, change: Coin[]} */
@@ -65,9 +63,9 @@ final class VendingMachine
     }
 
     /** @return Coin[] */
-    public function returnCoins(): array
+    public function returnCoins(Customer $customer): array
     {
-        $this->requireCustomer();
+        $this->enterCustomer($customer);
         $coins = $this->insertedCoins;
         $this->insertedCoins = [];
         $this->customer = null;

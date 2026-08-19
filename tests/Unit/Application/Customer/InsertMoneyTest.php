@@ -62,8 +62,7 @@ class InsertMoneyTest extends TestCase
     {
         $coin1 = Coin::fromAmount(0.10);
 
-        $machine = $this->repository->get();
-        $machine->enterCustomer(new Customer('other-customer'));
+        $this->useCase->__invoke(new Customer('other-customer'), $coin1);
 
         $this->expectException(\Domain\Exception\MachineBusy::class);
         $this->useCase->__invoke($this->customer, $coin1);
