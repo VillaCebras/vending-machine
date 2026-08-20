@@ -15,5 +15,8 @@ jobs:
       - name: Build application image
         run: docker compose build app
 
+      - name: Install Composer dependencies
+        run: docker compose run app composer install --no-interaction --prefer-dist
+
       - name: Run PHPUnit
         run: docker compose run app vendor/bin/phpunit tests
