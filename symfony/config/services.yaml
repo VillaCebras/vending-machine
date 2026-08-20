@@ -26,6 +26,9 @@ services:
     Application\:
         resource: '../../Application/'
 
+    Infrastructure\:
+        resource: '../../Infrastructure/'
+
     Domain\Repository\VendingMachineRepositoryInterface:
         alias: Infrastructure\InMemoryVendingMachineRepository
 
