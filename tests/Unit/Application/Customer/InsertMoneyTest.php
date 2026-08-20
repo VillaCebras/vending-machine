@@ -75,7 +75,7 @@ class InsertMoneyTest extends TestCase
         $machine = $this->repository->get();
         $machine->enableMaintenance('maintenance-code', 'maintenance-code');
 
-        $this->expectException(\Domain\Exception\MachineBusy::class);
+        $this->expectException(\Domain\Exception\CustomerModeRequired::class);
         $this->useCase->__invoke($this->customer, $coin1);
     }
 }
