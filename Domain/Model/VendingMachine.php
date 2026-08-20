@@ -36,14 +36,16 @@ final class VendingMachine
 
     public function insertCoin(Coin $coin, Customer $customer): void
     {
+        $this->requiresCustomerMode();
         $this->enterCustomer($customer);
         $this->insertedCoins[] = $coin;
     }
 
-    /** @return array{product: Product, change: Coin[]} */
-    public function buy(Product $product, ChangeCalculator $calculator): array
+    /** @return Coin[] */
+    public function buy(Customer $customer, Product $product, ChangeCalculator $calculator): array
     {
-        $this->requireCustomer();
+        $this->requiresCustomerMode();
+        $this->enterCustomer($customer);
         if ($this->insertedAmount() < $product->priceInCents()) {
             throw new InsufficientFunds();
         }
@@ -59,12 +61,13 @@ final class VendingMachine
         $this->insertedCoins = [];
         $this->customer = null;
 
-        return ['product' => $product, 'change' => $change];
+        return $change;
     }
 
     /** @return Coin[] */
     public function returnCoins(Customer $customer): array
     {
+        $this->requiresCustomerMode();
         $this->enterCustomer($customer);
         $coins = $this->insertedCoins;
         $this->insertedCoins = [];
@@ -90,6 +93,13 @@ final class VendingMachine
             throw new MaintenanceModeRequired();
         }
         $this->maintenance = false;
+    }
+
+    protected function requiresCustomerMode(): void
+    {
+        if ($this->isInMaintenance()) {
+            throw new CustomerModeRequired();
+        }
     }
 
     /** @param Coin[] $coins */
