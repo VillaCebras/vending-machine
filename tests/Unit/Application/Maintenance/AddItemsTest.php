@@ -6,8 +6,8 @@ use Application\Maintenance\AddItems\AddItems;
 use Application\Maintenance\AddItems\RestockOrder;
 use Domain\Exception\MaintenanceModeRequired;
 use Domain\Model\Customer;
-use Domain\ValueObject\Coin;
 use Domain\Model\Product;
+use Domain\ValueObject\Coin;
 use Infrastructure\InMemoryVendingMachineRepository;
 use PHPUnit\Framework\TestCase;
 

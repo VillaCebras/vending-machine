@@ -2,9 +2,8 @@
 
 namespace Tests\Application\Customer;
 
-use Application\Customer\ReturnCoins\ReturnCoins;
 use Application\Customer\InsertMoney\InsertMoney;
-use Domain\Exception\CustomerModeRequired;
+use Application\Customer\ReturnCoins\ReturnCoins;
 use Domain\Exception\MachineBusy;
 use Domain\Model\Customer;
 use Domain\ValueObject\Coin;

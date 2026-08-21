@@ -26,7 +26,7 @@ class AddChangeTest extends TestCase
         $machine = $this->repository->get();
         $machine->enableMaintenance('maintenance-code', 'maintenance-code');
 
-        $this->useCase->execute([Coin::fromAmount(0.10), Coin::fromAmount(0.25), Coin::fromAmount(1.00) ]);
+        $this->useCase->execute([Coin::fromAmount(0.10), Coin::fromAmount(0.25), Coin::fromAmount(1.00)]);
 
         $this->assertSame(3, $machine->availableChange());
     }

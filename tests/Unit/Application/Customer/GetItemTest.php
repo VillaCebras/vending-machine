@@ -4,16 +4,16 @@ namespace Tests\Application\Customer;
 
 use Application\Customer\GetItem\GetItem;
 use Application\Customer\InsertMoney\InsertMoney;
+use Application\Maintenance\AddItems\RestockOrder;
 use Domain\Exception\CustomerModeRequired;
 use Domain\Exception\InsufficientFunds;
 use Domain\Exception\MachineBusy;
 use Domain\Model\Customer;
+use Domain\Model\Product;
 use Domain\Service\ChangeCalculator;
 use Domain\ValueObject\Coin;
-use Domain\Model\Product;
 use Infrastructure\InMemoryVendingMachineRepository;
 use PHPUnit\Framework\TestCase;
-use Application\Maintenance\AddItems\RestockOrder;
 
 class GetItemTest extends TestCase
 {
