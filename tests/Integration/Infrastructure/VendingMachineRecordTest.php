@@ -22,7 +22,7 @@ class VendingMachineRecordTest extends KernelTestCase
     {
         parent::setUp();
 
-        self::bootKernel();
+        self::bootKernel(['environment' => 'test']);
 
         $entityManager = self::getContainer()->get('doctrine.orm.entity_manager');
         $this->assertInstanceOf(EntityManagerInterface::class, $entityManager);
