@@ -6,9 +6,10 @@ use Domain\ValueObject\Coin;
 
 final class ChangeCalculator
 {
-    /** 
-     * @param Coin[] $availableCoins 
-     * @return Coin[] 
+    /**
+     * @param Coin[] $availableCoins
+     *
+     * @return Coin[]
      */
     public function calculate(int $amountInCents, array $availableCoins): array
     {
@@ -17,10 +18,11 @@ final class ChangeCalculator
         return $this->findExactChange($amountInCents, $availableCoins, 0, []);
     }
 
-    /** 
-     * @param Coin[] $coins 
-     * @param Coin[] $selected 
-     * @return Coin[] 
+    /**
+     * @param Coin[] $coins
+     * @param Coin[] $selected
+     *
+     * @return Coin[]
      */
     private function findExactChange(int $remaining, array $coins, int $index, array $selected): array
     {

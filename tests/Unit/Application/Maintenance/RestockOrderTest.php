@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Application\Maintenance;
 
-use Domain\Model\Product;
 use Application\Maintenance\AddItems\RestockOrder;
+use Domain\Model\Product;
 use PHPUnit\Framework\TestCase;
 
 class RestockOrderTest extends TestCase

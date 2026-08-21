@@ -2,6 +2,7 @@
 
 namespace Domain\Model;
 
+use Application\Maintenance\AddItems\RestockOrder;
 use Domain\Exception\CustomerModeRequired;
 use Domain\Exception\InsufficientFunds;
 use Domain\Exception\InvalidMaintenanceCode;
@@ -10,7 +11,6 @@ use Domain\Exception\MaintenanceModeRequired;
 use Domain\Exception\OutOfStock;
 use Domain\Service\ChangeCalculator;
 use Domain\ValueObject\Coin;
-use Application\Maintenance\AddItems\RestockOrder;
 
 final class VendingMachine
 {
@@ -23,7 +23,7 @@ final class VendingMachine
     /** @var array<string, int> */
     private array $stock = [];
 
-    protected function enterCustomer(Customer $customer): void
+    private function enterCustomer(Customer $customer): void
     {
         if (
             $this->maintenance
@@ -95,7 +95,7 @@ final class VendingMachine
         $this->maintenance = false;
     }
 
-    protected function requiresCustomerMode(): void
+    private function requiresCustomerMode(): void
     {
         if ($this->isInMaintenance()) {
             throw new CustomerModeRequired();

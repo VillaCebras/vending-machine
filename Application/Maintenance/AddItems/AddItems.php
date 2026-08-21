@@ -3,7 +3,6 @@
 namespace Application\Maintenance\AddItems;
 
 use Domain\Repository\VendingMachineRepositoryInterface;
-use Application\Maintenance\AddItems\RestockOrder;
 
 final readonly class AddItems
 {

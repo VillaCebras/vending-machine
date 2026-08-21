@@ -2,7 +2,6 @@
 
 namespace Application\Customer\ReturnCoins;
 
-use Domain\Exception\MachineBusy;
 use Domain\Model\Customer;
 use Domain\Repository\VendingMachineRepositoryInterface;
 use Domain\ValueObject\Coin;

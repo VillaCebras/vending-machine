@@ -2,10 +2,10 @@
 
 namespace Application\Customer\GetItem;
 
-use Domain\Repository\VendingMachineRepositoryInterface;
-use Domain\Service\ChangeCalculator;
 use Domain\Model\Customer;
 use Domain\Model\Product;
+use Domain\Repository\VendingMachineRepositoryInterface;
+use Domain\Service\ChangeCalculator;
 
 final readonly class GetItem
 {
