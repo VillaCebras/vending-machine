@@ -13,6 +13,7 @@ use Domain\ValueObject\Coin;
 use Domain\Model\Product;
 use Infrastructure\InMemoryVendingMachineRepository;
 use PHPUnit\Framework\TestCase;
+use Application\Maintenance\AddItems\RestockOrder;
 
 class GetItemTest extends TestCase
 {
@@ -105,7 +106,7 @@ class GetItemTest extends TestCase
     {
         $machine = $this->repository->get();
         $machine->enableMaintenance('maintenance-code', 'maintenance-code');
-        $machine->addItems($product, 1);
+        $machine->addItems(new RestockOrder($product, 1));
         $machine->addChange($changeCoins);
         $machine->disableMaintenance();
     }

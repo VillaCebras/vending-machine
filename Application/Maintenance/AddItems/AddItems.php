@@ -3,6 +3,8 @@
 namespace Application\Maintenance\AddItems;
 
 use Domain\Repository\VendingMachineRepositoryInterface;
+use Application\Maintenance\AddItems\RestockOrder;
+
 final readonly class AddItems
 {
     public function __construct(private VendingMachineRepositoryInterface $machines)
@@ -14,7 +16,7 @@ final readonly class AddItems
     {
         $machine = $this->machines->get();
         foreach ($orders as $order) {
-            $machine->addItems($order->product, $order->quantity);
+            $machine->addItems($order);
         }
         $this->machines->save($machine);
     }
