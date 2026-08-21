@@ -115,7 +115,7 @@ final class VendingMachine
         if ($order->quantity < 0) {
             throw new \InvalidArgumentException('Quantity cannot be negative.');
         }
-        $this->stock[$order->product->name] = ($this->stock[$order->product->name] ?? 0) + $order->quantity;
+        $this->stock[$order->getProductName()] = ($this->stock[$order->getProductName()] ?? 0) + $order->quantity;
     }
 
     public function insertedAmount(): int
