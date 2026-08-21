@@ -10,7 +10,6 @@ use Domain\Exception\MaintenanceModeRequired;
 use Domain\Exception\OutOfStock;
 use Domain\Service\ChangeCalculator;
 use Domain\ValueObject\Coin;
-use Domain\ValueObject\Product;
 
 final class VendingMachine
 {
@@ -46,18 +45,18 @@ final class VendingMachine
     {
         $this->requiresCustomerMode();
         $this->enterCustomer($customer);
-        if ($this->insertedAmount() < $product->priceInCents()) {
+        if ($this->insertedAmount() < $product->priceInCents) {
             throw new InsufficientFunds();
         }
-        if (($this->stock[$product->value] ?? 0) < 1) {
+        if (($this->stock[$product->name] ?? 0) < 1) {
             throw new OutOfStock();
         }
 
-        $changeAmount = $this->insertedAmount() - $product->priceInCents();
+        $changeAmount = $this->insertedAmount() - $product->priceInCents;
         $change = $calculator->calculate($changeAmount, $this->changeCoins);
         $this->changeCoins = $this->removeCoins($this->changeCoins, $change);
         $this->changeCoins = [...$this->changeCoins, ...$this->insertedCoins];
-        --$this->stock[$product->value];
+        --$this->stock[$product->name];
         $this->insertedCoins = [];
         $this->customer = null;
 
@@ -115,7 +114,7 @@ final class VendingMachine
         if ($quantity < 0) {
             throw new \InvalidArgumentException('Quantity cannot be negative.');
         }
-        $this->stock[$product->value] = ($this->stock[$product->value] ?? 0) + $quantity;
+        $this->stock[$product->name] = ($this->stock[$product->name] ?? 0) + $quantity;
     }
 
     public function insertedAmount(): int
@@ -145,7 +144,7 @@ final class VendingMachine
 
     public function stockOf(Product $product): int
     {
-        return $this->stock[$product->value] ?? 0;
+        return $this->stock[$product->name] ?? 0;
     }
 
     public function availableChange(): int

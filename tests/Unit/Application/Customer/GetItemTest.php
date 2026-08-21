@@ -10,7 +10,7 @@ use Domain\Exception\MachineBusy;
 use Domain\Model\Customer;
 use Domain\Service\ChangeCalculator;
 use Domain\ValueObject\Coin;
-use Domain\ValueObject\Product;
+use Domain\Model\Product;
 use Infrastructure\InMemoryVendingMachineRepository;
 use PHPUnit\Framework\TestCase;
 
@@ -32,24 +32,24 @@ class GetItemTest extends TestCase
 
     public function testGetsItemWithExactAmount(): void
     {
-        $this->addProduct(Product::WATER);
+        $this->addProduct(Product::fromName('WATER'));
         $this->insertUseCase->__invoke($this->customer, Coin::fromAmount(1.00));
 
-        $result = $this->useCase->__invoke($this->customer, Product::WATER);
+        $result = $this->useCase->__invoke($this->customer, Product::fromName('WATER'));
 
         $this->assertSame([], $result);
     }
 
     public function testDecreasesStockWhenItemIsPurchased(): void
     {
-        $this->addProduct(Product::WATER);
+        $this->addProduct(Product::fromName('WATER'));
         $this->insertUseCase->__invoke($this->customer, Coin::fromAmount(1.00));
 
-        $this->assertSame(1, $this->repository->get()->stockOf(Product::WATER));
+        $this->assertSame(1, $this->repository->get()->stockOf(Product::fromName('WATER')));
 
-        $this->useCase->__invoke($this->customer, Product::WATER);
+        $this->useCase->__invoke($this->customer, Product::fromName('WATER'));
 
-        $this->assertSame(0, $this->repository->get()->stockOf(Product::WATER));
+        $this->assertSame(0, $this->repository->get()->stockOf(Product::fromName('WATER')));
     }
 
     public function testFailsIfMachineTakenByOtherCustomer(): void
@@ -57,36 +57,36 @@ class GetItemTest extends TestCase
         $this->insertUseCase->__invoke(new Customer('other-customer'), Coin::fromAmount(0.10));
 
         $this->expectException(MachineBusy::class);
-        $this->useCase->__invoke($this->customer, Product::WATER);
+        $this->useCase->__invoke($this->customer, Product::fromName('WATER'));
     }
 
     public function testFailsIfThereAreNotEnoughFunds(): void
     {
-        $this->addProduct(Product::WATER);
+        $this->addProduct(Product::fromName('WATER'));
         $this->insertUseCase->__invoke($this->customer, Coin::fromAmount(0.25));
 
         $this->expectException(InsufficientFunds::class);
-        $this->useCase->__invoke($this->customer, Product::WATER);
+        $this->useCase->__invoke($this->customer, Product::fromName('WATER'));
     }
 
     public function testGetsItemAndReturnsChange(): void
     {
-        $this->addProduct(Product::WATER, [Coin::fromAmount(0.25)]);
+        $this->addProduct(Product::fromName('WATER'), [Coin::fromAmount(0.25)]);
         $this->insertUseCase->__invoke($this->customer, Coin::fromAmount(1.00));
         $this->insertUseCase->__invoke($this->customer, Coin::fromAmount(0.25));
 
-        $result = $this->useCase->__invoke($this->customer, Product::WATER);
+        $result = $this->useCase->__invoke($this->customer, Product::fromName('WATER'));
 
         $this->assertEquals([Coin::fromAmount(0.25)], $result);
     }
 
     public function testGetsItemWithoutReturningChangeWhenNoChangeIsAvailable(): void
     {
-        $this->addProduct(Product::WATER);
+        $this->addProduct(Product::fromName('WATER'));
         $this->insertUseCase->__invoke($this->customer, Coin::fromAmount(1.00));
         $this->insertUseCase->__invoke($this->customer, Coin::fromAmount(0.25));
 
-        $result = $this->useCase->__invoke($this->customer, Product::WATER);
+        $result = $this->useCase->__invoke($this->customer, Product::fromName('WATER'));
 
         $this->assertSame([], $result);
     }
@@ -97,7 +97,7 @@ class GetItemTest extends TestCase
         $machine->enableMaintenance('maintenance-code', 'maintenance-code');
 
         $this->expectException(CustomerModeRequired::class);
-        $this->useCase->__invoke($this->customer, Product::WATER);
+        $this->useCase->__invoke($this->customer, Product::fromName('WATER'));
     }
 
     /** @param Coin[] $changeCoins */
