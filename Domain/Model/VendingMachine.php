@@ -153,6 +153,29 @@ final class VendingMachine
         return count($this->changeCoins);
     }
 
+    public function snapshot(): VendingMachineSnapshot
+    {
+        return new VendingMachineSnapshot(
+            $this->maintenance,
+            $this->customer?->id,
+            array_map(static fn (Coin $coin): int => $coin->cents, $this->insertedCoins),
+            array_map(static fn (Coin $coin): int => $coin->cents, $this->changeCoins),
+            $this->stock,
+        );
+    }
+
+    public static function fromSnapshot(VendingMachineSnapshot $snapshot): self
+    {
+        $machine = new self();
+        $machine->maintenance = $snapshot->maintenance;
+        $machine->customer = null !== $snapshot->customerId ? new Customer($snapshot->customerId) : null;
+        $machine->insertedCoins = array_map(static fn (int $cents): Coin => Coin::fromCents($cents), $snapshot->insertedCoinCents);
+        $machine->changeCoins = array_map(static fn (int $cents): Coin => Coin::fromCents($cents), $snapshot->changeCoinCents);
+        $machine->stock = $snapshot->stock;
+
+        return $machine;
+    }
+
     private function requireCustomer(): void
     {
         if (null === $this->customer || $this->maintenance) {

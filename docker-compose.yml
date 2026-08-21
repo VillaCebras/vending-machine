@@ -1,6 +1,4 @@
 
-version: '3.8'
-
 services:
   app:
     build:
@@ -11,11 +9,16 @@ services:
       - ./:/var/www
     working_dir: /var/www
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - "9000:9000"
     environment:
       COMPOSER_ALLOW_SUPERUSER: "1"
+      APP_ENV: dev
+      APP_SECRET: change-me
+      DEFAULT_URI: http://localhost
+      DATABASE_URL: mysql://db_user:secret@db:3306/vending_machine?serverVersion=8.0.46&charset=utf8mb4
     restart: unless-stopped
     networks:
       - appnet

@@ -15,7 +15,7 @@ jobs:
         run: docker compose build app
 
       - name: Configure Symfony environment
-        run: printf "APP_ENV=test\nAPP_DEBUG=1\nAPP_SECRET=ci-secret\nDEFAULT_URI=http://localhost\n" > symfony/.env
+        run: printf "APP_ENV=test\nAPP_DEBUG=1\nAPP_SECRET=ci-secret\nDEFAULT_URI=http://localhost\nDATABASE_URL=mysql://db_user:secret@db:3306/vending_machine?serverVersion=8.0.46&charset=utf8mb4\n" > symfony/.env
 
       - name: Install Composer dependencies
         run: docker compose run app composer install --no-interaction --prefer-dist

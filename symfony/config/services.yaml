@@ -28,9 +28,11 @@ services:
 
     Infrastructure\:
         resource: '../../Infrastructure/'
+        exclude:
+            - '../../Infrastructure/Doctrine/'
 
     Domain\Repository\VendingMachineRepositoryInterface:
-        alias: Infrastructure\InMemoryVendingMachineRepository
+        alias: Infrastructure\DoctrineVendingMachineRepository
 
     # Application\Maintenance\EnableService\EnableService:
     #     bind:
