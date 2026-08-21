@@ -4,8 +4,8 @@ namespace Application\Customer\GetItem;
 
 use Domain\Repository\VendingMachineRepositoryInterface;
 use Domain\Service\ChangeCalculator;
-use Domain\ValueObject\Product;
 use Domain\Model\Customer;
+use Domain\Model\Product;
 
 final readonly class GetItem
 {
