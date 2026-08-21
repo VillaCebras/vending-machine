@@ -1,4 +1,4 @@
-.PHONY: up down shell test run
+.PHONY: up down shell test run migrate
 
 up:
 	docker compose up --build
@@ -14,3 +14,6 @@ test:
 
 run:
 	docker compose exec app php symfony/bin/console vending-machine:run
+
+migrate:
+	docker compose exec app php symfony/bin/console doctrine:migrations:migrate --no-interaction
