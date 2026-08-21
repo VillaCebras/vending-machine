@@ -10,6 +10,7 @@ use Domain\Exception\MaintenanceModeRequired;
 use Domain\Exception\OutOfStock;
 use Domain\Service\ChangeCalculator;
 use Domain\ValueObject\Coin;
+use Application\Maintenance\AddItems\RestockOrder;
 
 final class VendingMachine
 {
@@ -108,13 +109,13 @@ final class VendingMachine
         $this->changeCoins = [...$this->changeCoins, ...$coins];
     }
 
-    public function addItems(Product $product, int $quantity): void
+    public function addItems(RestockOrder $order): void
     {
         $this->requireMaintenance();
-        if ($quantity < 0) {
+        if ($order->quantity < 0) {
             throw new \InvalidArgumentException('Quantity cannot be negative.');
         }
-        $this->stock[$product->name] = ($this->stock[$product->name] ?? 0) + $quantity;
+        $this->stock[$order->product->name] = ($this->stock[$order->product->name] ?? 0) + $order->quantity;
     }
 
     public function insertedAmount(): int
