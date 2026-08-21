@@ -32,9 +32,9 @@ services:
     Domain\Repository\VendingMachineRepositoryInterface:
         alias: Infrastructure\InMemoryVendingMachineRepository
 
-    # Application\Maintenance\EnableService\EnableService:
-    #     bind:
-    #         $maintenanceCode: '%vending_machine.maintenance_code%'
+    Application\Maintenance\EnableService\EnableService:
+        bind:
+            $maintenanceCode: '%vending_machine.maintenance_code%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

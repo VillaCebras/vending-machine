@@ -21,7 +21,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *
  *     return App::config([
  *         'services' => [
- *             'Symfony\\' => [
+ *             'App\\' => [
  *                 'resource' => '../src/',
  *             ],
  *         ],
