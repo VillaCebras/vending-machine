@@ -10,7 +10,7 @@ shell:
 	docker compose exec app /bin/bash
 
 test:
-	docker compose run --rm app vendor/bin/phpunit tests --colors=always --testdox
+	docker compose run --rm app vendor/bin/phpunit tests/Integration --colors=always --testdox
 
 run:
 	docker compose exec app php symfony/bin/console vending-machine:run
