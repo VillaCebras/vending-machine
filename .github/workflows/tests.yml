@@ -24,7 +24,7 @@ jobs:
         run: docker compose up -d db --wait
 
       - name: Run PHPUnit
-        run: docker compose run app vendor/bin/phpunit tests --coverage-cobertura=/var/www/coverage-report/cobertura.xml
+        run: docker compose -f docker-compose.yml -f docker-compose.test.yml run app vendor/bin/phpunit tests --coverage-cobertura=/var/www/coverage-report/cobertura.xml
 
       - name: Upload coverage report
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
