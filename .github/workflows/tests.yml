@@ -3,6 +3,9 @@ name: Tests
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   phpunit:
     runs-on: ubuntu-latest
@@ -27,9 +30,8 @@ jobs:
         run: docker compose -f docker-compose.yml -f docker-compose.test.yml run app vendor/bin/phpunit tests --coverage-cobertura=/var/www/coverage-report/cobertura.xml
 
       - name: Upload coverage report
-        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-        uses: actions/upload-code-coverage@v1
+        uses: actions/upload-artifact@v4
         with:
-          file: coverage-report/cobertura.xml
-          language: PHP
-          label: PHP
+          name: coverage-cobertura
+          path: coverage-report/cobertura.xml
+          if-no-files-found: error
