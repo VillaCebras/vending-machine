@@ -112,9 +112,6 @@ final class VendingMachine
     public function addItems(RestockOrder $order): void
     {
         $this->requireMaintenance();
-        if ($order->quantity < 0) {
-            throw new \InvalidArgumentException('Quantity cannot be negative.');
-        }
         $this->stock[$order->getProductName()] = ($this->stock[$order->getProductName()] ?? 0) + $order->quantity;
     }
 
@@ -175,14 +172,7 @@ final class VendingMachine
 
         return $machine;
     }
-
-    private function requireCustomer(): void
-    {
-        if (null === $this->customer || $this->maintenance) {
-            throw new CustomerModeRequired();
-        }
-    }
-
+    
     private function requireMaintenance(): void
     {
         if (!$this->maintenance) {
