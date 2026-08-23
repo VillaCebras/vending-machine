@@ -1,0 +1,10 @@
+
+services:
+  app:
+    environment:
+      COMPOSER_ALLOW_SUPERUSER: "1"
+      APP_ENV: test
+      APP_SECRET: change-me
+      DEFAULT_URI: http://localhost
+      DATABASE_URL: mysql://db_user:secret@db:3306/vending_machine?serverVersion=8.0.46&charset=utf8mb4
+      XDEBUG_MODE: coverage

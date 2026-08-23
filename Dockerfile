@@ -10,6 +10,9 @@ RUN apt-get update \
 	&& docker-php-ext-install pdo_mysql zip \
 	&& rm -rf /var/lib/apt/lists/*
 
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
 # Copy Composer from the official Composer image
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 RUN chmod +x /usr/local/bin/composer
