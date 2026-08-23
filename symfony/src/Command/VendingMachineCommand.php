@@ -27,6 +27,7 @@ use Symfony\Component\Console\Question\Question;
 final class VendingMachineCommand extends Command
 {
     private Customer $customer;
+    private float $balance = 0;
 
     public function __construct(
         private readonly InsertMoney $insertMoney,
@@ -47,50 +48,56 @@ final class VendingMachineCommand extends Command
         $questionHelper = $this->getHelper('question');
         $output->writeln('<info>Vending machine started.</info>');
 
-        while (true) {
-            $choice = $this->ask($questionHelper, $input, $output, new ChoiceQuestion(
-                'Choose an operation' . PHP_EOL,
-                ['1' => 'Customer', '2' => 'Maintenance', 'q' => 'Exit'],
-                '1',
-            ));
+        while ($this->mainMenu($questionHelper, $input, $output));
 
-            if ('q' === $choice) {
-                return Command::SUCCESS;
-            }
+        return Command::SUCCESS;
+    }
 
-            if ('1' === $choice) {
-                $this->customerMenu($questionHelper, $input, $output);
-            } elseif ('2' === $choice) {
-                $this->maintenanceMenu($questionHelper, $input, $output);
-            }
+    private function mainMenu(QuestionHelper $helper, InputInterface $input, OutputInterface $output): bool
+    {
+        $choice = $this->ask($helper, $input, $output, new ChoiceQuestion(
+            'Choose an operation:',
+            ['1' => 'Customer', '2' => 'Maintenance', 'q' => 'Exit'],
+            '1',
+        ));
+
+        if ('q' === $choice) {
+            return false;
         }
+
+        if ('1' === $choice) {
+            $this->customerMenu($helper, $input, $output);
+        } elseif ('2' === $choice) {
+            $this->maintenanceMenu($helper, $input, $output);
+        }
+
+        return true;
     }
 
     private function customerMenu(QuestionHelper $helper, InputInterface $input, OutputInterface $output): void
     {
         while (true) {
             $choice = $this->ask($helper, $input, $output, new ChoiceQuestion(
-                'Customer operation' . PHP_EOL,
-                ['1' => 'Insert coin', '2' => 'Buy product', '3' => 'Return coins', 'q' => 'Exit'],
+                'Customer operation: ' . PHP_EOL . sprintf('(Current balance: %.2f EUR)', $this->balance),
+                ['1' => 'Insert coin', '2' => 'Buy product', '3' => 'Return coins'],
                 '1',
             ));
 
-            if ('q' === $choice) {
-                return;
-            }
-
             try {
-                if ('1' === $choice) {
+                if ('Insert coin' === $choice) {
                     $amount = $this->ask($helper, $input, $output, new Question('Coin amount (0.05, 0.10, 0.25 or 1.00): '));
-                    $total = ($this->insertMoney)($this->customer, Coin::fromAmount((string) $amount));
-                    $output->writeln(sprintf('Total inserted: %.2f EUR', $total));
-                } elseif ('2' === $choice) {
+                    $this->balance = ($this->insertMoney)($this->customer, Coin::fromAmount((string) $amount));
+                } elseif ('Buy product' === $choice) {
                     $product = Product::fromName((string) $this->ask($helper, $input, $output, new Question('Product (WATER, SODA or JUICE): ')));
                     $change = ($this->getItem)($this->customer, $product);
                     $output->writeln(sprintf('Product served. Change: %s', $this->formatCoins($change)));
-                } elseif ('3' === $choice) {
+                    $this->balance = 0;
+                    return;
+                } elseif ('Return coins' === $choice) {
                     $coins = ($this->returnCoins)($this->customer);
                     $output->writeln(sprintf('Coins returned: %s', $this->formatCoins($coins)));
+                    $this->balance = 0;
+                    return;
                 }
             } catch (DomainException|\InvalidArgumentException $exception) {
                 $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
@@ -114,13 +121,13 @@ final class VendingMachineCommand extends Command
 
         while (true) {
             $choice = $this->ask($helper, $input, $output, new ChoiceQuestion(
-                'Maintenance operation' . PHP_EOL,
-                ['1' => 'Add products', '2' => 'Add change coins', '3' => 'Disable maintenance' ],
+                'Maintenance operation:',
+                ['1' => 'Add products', '2' => 'Add change coins', '3' => 'Disable maintenance'],
                 '1',
             ));
 
             try {
-                if ('1' === $choice) {
+                if ('Add products' === $choice) {
                     $orders = [];
                     foreach (explode(',', (string) $this->ask($helper, $input, $output, new Question('Products (WATER-3, JUICE-5): '))) as $order) {
                         [$name, $quantity] = array_pad(explode('-', trim($order), 2), 2, null);
@@ -128,7 +135,7 @@ final class VendingMachineCommand extends Command
                     }
                     $this->addItems->execute($orders);
                     $output->writeln('<info>Products added.</info>');
-                } elseif ('2' === $choice) {
+                } elseif ('Add change coins' === $choice) {
                     $coins = array_map(fn (string $amount): Coin => Coin::fromAmount(trim($amount)), explode(',', (string) $this->ask($helper, $input, $output, new Question('Coins (0.05,0.25,1.00)'))));
                     $this->addChange->execute($coins);
                     $output->writeln('<info>Change coins added.</info>');
