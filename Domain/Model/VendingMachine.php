@@ -54,7 +54,7 @@ final class VendingMachine
         }
 
         $changeAmount = $this->insertedAmount() - $product->priceInCents;
-        $change = $calculator->calculate($changeAmount, $this->changeCoins);
+        $change = $calculator->calculate($changeAmount, [...$this->changeCoins, ...$this->insertedCoins]);
         $this->changeCoins = $this->removeCoins($this->changeCoins, $change);
         $this->changeCoins = [...$this->changeCoins, ...$this->insertedCoins];
         --$this->stock[$product->name];

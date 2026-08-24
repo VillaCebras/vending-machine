@@ -81,13 +81,26 @@ class GetItemTest extends TestCase
         $this->assertEquals([Coin::fromAmount(0.25)], $result);
     }
 
-    public function testGetsItemWithoutReturningChangeWhenNoChangeIsAvailable(): void
+    public function testGetsItemAndReturnsTwoCoinsAsChange(): void
     {
         $this->addProduct(Product::fromName('WATER'));
         $this->insertUseCase->__invoke($this->customer, Coin::fromAmount(1.00));
         $this->insertUseCase->__invoke($this->customer, Coin::fromAmount(0.25));
+        $this->insertUseCase->__invoke($this->customer, Coin::fromAmount(0.25));
 
         $result = $this->useCase->__invoke($this->customer, Product::fromName('WATER'));
+
+        $this->assertEquals([Coin::fromAmount(0.25), Coin::fromAmount(0.25)], $result);
+        $this->assertSame(0, $this->repository->get()->stockOf(Product::fromName('WATER')));
+    }
+
+    public function testGetsItemWithoutReturningChangeWhenNoChangeIsAvailable(): void
+    {
+        $this->addProduct(Product::fromName('JUICE'));
+        $this->insertUseCase->__invoke($this->customer, Coin::fromAmount(1.00));
+        $this->insertUseCase->__invoke($this->customer, Coin::fromAmount(1.00));
+
+        $result = $this->useCase->__invoke($this->customer, Product::fromName('JUICE'));
 
         $this->assertSame([], $result);
     }
