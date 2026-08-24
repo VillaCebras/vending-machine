@@ -3,6 +3,9 @@ name: Tests
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   phpunit:
     runs-on: ubuntu-latest
@@ -24,4 +27,11 @@ jobs:
         run: docker compose up -d db --wait
 
       - name: Run PHPUnit
-        run: docker compose run app vendor/bin/phpunit tests
+        run: docker compose -f docker-compose.yml -f docker-compose.test.yml run app vendor/bin/phpunit tests --coverage-cobertura=/var/www/coverage-report/cobertura.xml
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-cobertura
+          path: coverage-report/cobertura.xml
+          if-no-files-found: error

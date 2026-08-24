@@ -101,6 +101,19 @@ class GetItemTest extends TestCase
         $this->useCase->__invoke($this->customer, Product::fromName('WATER'));
     }
 
+    public function testFailsIfProductIsOutOfStock(): void
+    {
+        // Add a product and buy it to deplete stock
+        $this->addProduct(Product::fromName('WATER'));
+        $this->insertUseCase->__invoke($this->customer, Coin::fromAmount(1.00));
+        $this->useCase->__invoke($this->customer, Product::fromName('WATER'));
+
+        // Try to buy again (should be out of stock)
+        $this->insertUseCase->__invoke($this->customer, Coin::fromAmount(1.00));
+        $this->expectException(\Domain\Exception\OutOfStock::class);
+        $this->useCase->__invoke($this->customer, Product::fromName('WATER'));
+    }
+
     /** @param Coin[] $changeCoins */
     private function addProduct(Product $product, array $changeCoins = []): void
     {

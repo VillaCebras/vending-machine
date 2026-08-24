@@ -10,7 +10,7 @@ shell:
 	docker compose exec app /bin/bash
 
 test:
-	docker compose run --rm app vendor/bin/phpunit --colors=always --testdox
+	docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm app vendor/bin/phpunit --colors=always --testdox --coverage-cobertura=/var/www/coverage-report/cobertura.xml
 
 run:
 	docker compose exec app php symfony/bin/console vending-machine:run

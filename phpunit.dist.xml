@@ -31,7 +31,10 @@
             restrictWarnings="true"
     >
         <include>
-            <directory>src</directory>
+            <directory>Domain</directory>
+            <directory>Application</directory>
+            <directory>Infrastructure</directory>
+            <directory>symfony/src</directory>
         </include>
 
         <deprecationTrigger>
