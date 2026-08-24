@@ -2,9 +2,7 @@
 
 namespace Symfony\Command;
 
-use Application\Customer\GetItem\GetItem;
-use Application\Customer\InsertMoney\InsertMoney;
-use Application\Customer\ReturnCoins\ReturnCoins;
+use Application\Customer\GetBalance\GetBalance;
 use Application\Maintenance\AddChange\AddChange;
 use Application\Maintenance\AddItems\AddItems;
 use Application\Maintenance\AddItems\RestockOrder;
@@ -27,17 +25,15 @@ use Symfony\Component\Console\Question\Question;
 final class VendingMachineCommand extends Command
 {
     private Customer $customer;
-    private float $balance = 0;
 
     public function __construct(
-        private readonly InsertMoney $insertMoney,
-        private readonly GetItem $getItem,
-        private readonly ReturnCoins $returnCoins,
         private readonly EnableService $enableService,
         private readonly DisableService $disableService,
         private readonly AddItems $addItems,
         private readonly AddChange $addChange,
+        private readonly GetBalance $getBalance,
         private readonly VendingMachineRepositoryInterface $machines,
+        private readonly VendingMachineOperationFactory $operationFactory,
     ) {
         parent::__construct();
         $this->customer = new Customer('customer-' . uniqid());
@@ -74,29 +70,45 @@ final class VendingMachineCommand extends Command
         return true;
     }
 
+    /** @return list<string> */
+    private function choices(): array
+    {
+        $choices = [];
+        foreach ($this->operationFactory->choices() as $index => $choice) {
+            $choices[$index + 1] = $choice;
+        }
+        return $choices;
+    }
+
+    private function getBalance(): float
+    {
+        return ($this->getBalance)() / 100;
+    }
+
     private function customerMenu(QuestionHelper $helper, InputInterface $input, OutputInterface $output): void
     {
         while (true) {
+            $choices = $this->choices();
+            $balance = $this->getBalance();
             $choice = $this->ask($helper, $input, $output, new ChoiceQuestion(
-                'Customer operation: ' . PHP_EOL . sprintf('(Current balance: %.2f EUR)', $this->balance),
-                ['1' => 'Insert coin', '2' => 'Buy product', '3' => 'Return coins'],
+                'Customer operation: ' . PHP_EOL . sprintf('(Current balance: %.2f EUR)', $balance),
+                $choices,
                 '1',
             ));
 
             try {
-                if ('Insert coin' === $choice) {
-                    $amount = $this->ask($helper, $input, $output, new Question('Coin amount (0.05, 0.10, 0.25 or 1.00): '));
-                    $this->balance = ($this->insertMoney)($this->customer, Coin::fromAmount((string) $amount));
-                } elseif ('Buy product' === $choice) {
-                    $product = Product::fromName((string) $this->ask($helper, $input, $output, new Question('Product (WATER, SODA or JUICE): ')));
-                    $change = ($this->getItem)($this->customer, $product);
-                    $output->writeln(sprintf('Product served. Change: %s', $this->formatCoins($change)));
-                    $this->balance = 0;
-                    return;
-                } elseif ('Return coins' === $choice) {
-                    $coins = ($this->returnCoins)($this->customer);
-                    $output->writeln(sprintf('Coins returned: %s', $this->formatCoins($coins)));
-                    $this->balance = 0;
+                $operation = $this->operationFactory->create($choice);
+                $commandInput = null;
+                if ($operation->hasPrompt()) {
+                    $commandInput = $this->ask($helper, $input, $output, new Question($operation->getPrompt()));
+                }
+                $returnToMainMenu = $operation->execute($commandInput, $this->customer);
+
+                if ($operation->hasOutput()) {
+                    $output->writeln($operation->getOutput());
+                }
+
+                if ($returnToMainMenu) {
                     return;
                 }
             } catch (DomainException|\InvalidArgumentException $exception) {
