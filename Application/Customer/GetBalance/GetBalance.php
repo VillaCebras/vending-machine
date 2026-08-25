@@ -13,6 +13,7 @@ final readonly class GetBalance
     public function __invoke(): int
     {
         $machine = $this->machines->get();
+
         return $machine->insertedAmount();
     }
 }

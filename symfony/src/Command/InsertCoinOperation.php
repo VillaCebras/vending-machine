@@ -5,7 +5,6 @@ namespace Symfony\Command;
 use Application\Customer\InsertMoney\InsertMoney;
 use Domain\Model\Customer;
 use Domain\ValueObject\Coin;
-use Symfony\Command\VendingMachineOperation;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 #[AsTaggedItem('Insert coin')]
@@ -13,7 +12,8 @@ class InsertCoinOperation implements VendingMachineOperation
 {
     public function __construct(
         private readonly InsertMoney $insertMoney,
-    ) {}
+    ) {
+    }
 
     public function hasPrompt(): bool
     {
@@ -38,6 +38,7 @@ class InsertCoinOperation implements VendingMachineOperation
     public function execute(?string $input, ?Customer $customer): bool
     {
         $this->insertMoney->__invoke($customer, Coin::fromAmount((string) $input));
+
         return false;
     }
 }

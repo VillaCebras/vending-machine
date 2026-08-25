@@ -2,16 +2,17 @@
 
 namespace Symfony\Command;
 
-use Symfony\Contracts\Service\ServiceCollectionInterface as ContainerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
+use Symfony\Contracts\Service\ServiceCollectionInterface as ContainerInterface;
 
 class VendingMachineOperationFactory
 {
     public function __construct(
         #[AutowireLocator('vending_machine.operation')]
         private ContainerInterface $operations,
-    ) {}
-    
+    ) {
+    }
+
     public function create(string $choice): VendingMachineOperation
     {
         return $this->operations->get($choice);
