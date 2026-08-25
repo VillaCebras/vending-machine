@@ -1,0 +1,17 @@
+
+services:
+  app:
+    volumes:
+      - ./:/var/www
+      - ./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/99-xdebug.ini
+    working_dir: /var/www
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      COMPOSER_ALLOW_SUPERUSER: "1"
+      APP_ENV: dev
+      APP_SECRET: change-me
+      DEFAULT_URI: http://localhost
+      DATABASE_URL: mysql://db_user:secret@db:3306/vending_machine?serverVersion=8.0.46&charset=utf8mb4
+      XDEBUG_MODE: debug
+      XDEBUG_SESSION: VSCODE
