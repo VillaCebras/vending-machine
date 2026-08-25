@@ -4,9 +4,7 @@ namespace Symfony\Command;
 
 use Application\Customer\ReturnCoins\ReturnCoins;
 use Domain\Model\Customer;
-use Domain\Model\Product;
 use Domain\ValueObject\Coin;
-use Symfony\Command\VendingMachineOperation;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 #[AsTaggedItem('Return coins')]
@@ -16,7 +14,8 @@ class ReturnCoinsOperation implements VendingMachineOperation
         private readonly ReturnCoins $returnCoins,
         /** @var Coin[] */
         private array $coins = [],
-    ) {}
+    ) {
+    }
 
     public function hasPrompt(): bool
     {
@@ -41,6 +40,7 @@ class ReturnCoinsOperation implements VendingMachineOperation
     public function execute(?string $input, ?Customer $customer): bool
     {
         $this->coins = ($this->returnCoins)($customer);
+
         return true;
     }
 

@@ -6,7 +6,6 @@ use Application\Customer\GetItem\GetItem;
 use Domain\Model\Customer;
 use Domain\Model\Product;
 use Domain\ValueObject\Coin;
-use Symfony\Command\VendingMachineOperation;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 #[AsTaggedItem('Buy product')]
@@ -16,7 +15,8 @@ class BuyProductOperation implements VendingMachineOperation
         private readonly GetItem $getItem,
         /** @var Coin[] */
         private array $change = [],
-    ) {}
+    ) {
+    }
 
     public function hasPrompt(): bool
     {
@@ -42,6 +42,7 @@ class BuyProductOperation implements VendingMachineOperation
     {
         $product = Product::fromName((string) $input);
         $this->change = ($this->getItem)($customer, $product);
+
         return true;
     }
 
